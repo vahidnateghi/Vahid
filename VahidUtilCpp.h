@@ -467,6 +467,69 @@ namespace Helper
             return ret;
         }
 
+        template<typename T, int N>
+        inline T fromBuf_LittleEndian( const std::array<uint8_t, ZafarDefines::Consts::RxBufSize>& buf,
+                                       int                                                         start )
+        {
+            T ret = 0;
+            for( int i = 0; i < N; ++i )
+            {
+                int idx = ( start + i ) % ZafarDefines::Consts::RxBufSize;
+                ret *= 256;
+                ret += buf[idx];
+            }
+
+            return ret;
+        }
+
+        template<typename T, int N>
+        inline T fromBuf_BigEndian( const std::array<uint8_t, ZafarDefines::Consts::RxBufSize>& buf,
+                                    int                                                         start )
+        {
+            T ret = 0;
+            for( int i = 0; i < N; ++i )
+            {
+                int idx = ( start + i ) % ZafarDefines::Consts::RxBufSize;
+                ret += ( buf[idx] * pow( 256, i ) );
+            }
+
+            return ret;
+        }
+
+        template<typename T, int N>
+        inline void toBuf_LittleEndian( std::vector<uint8_t>& buf,
+                                        T                     val )
+        {
+            for( int i = 0; i < N; ++i )
+            {
+                buf.push_back( static_cast<uint8_t>( val / pow(256, i) ) );
+            }
+        }
+
+        template<typename T, int N>
+        inline void toBuf_BigEndian( std::vector<uint8_t>& buf,
+                                       T                     val )
+        {
+            for( int i = 0; i < N; ++i )
+            {
+                buf.push_back( static_cast<uint8_t>( val / pow(256, N - i - 1) ) );
+            }
+        }
+
+        template<typename T, int N>
+        inline T fromBitSet( const std::bitset<N>& bits,
+                             int                   start,
+                             int                   stop )
+        {
+            T ret = 0;
+            for( int i = start; i < stop; ++i )
+            {
+                ret += ( bits[i] * pow( 2, i ) );
+            }
+
+            return ret;
+        }
+
     }
 
     namespace Classes
